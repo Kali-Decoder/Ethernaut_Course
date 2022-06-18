@@ -1,13 +1,16 @@
 const Fallback = artifacts.require("Fallback");
 const Fallout = artifacts.require("Fallout");
+const CoinFlip = artifacts.require("CoinFlip");
 let fallback;
 let fallout;
+let coinflip;
 
 contract("Testing smart contract",(accounts)=>{
     beforeEach(async ()=>{
         fallback= await Fallback.deployed();
         let ether= await web3.utils.toWei("1","ether");
         fallout= await Fallout.deployed({from:accounts[0],value:ether});
+        coinflip= await CoinFlip.deployed();
 
     });
     // it("Should test first smart contract ",async ()=>{
@@ -31,22 +34,50 @@ contract("Testing smart contract",(accounts)=>{
 
     // });
 
-    it("Should Test Fallout contract",async()=>{
-        let owner= await fallout.owner();
-        let bal = await fallout.allocations(owner)
-        await fallout.postAllocation({from:accounts[1],value:'10000'});
-        bal = await  fallout.allocations(accounts[1]);
-        assert.equal(bal.toNumber(),10000);
+    // it("Should Test Fallout contract",async()=>{
+    //     let owner= await fallout.owner();
+    //     let bal = await fallout.allocations(owner)
+    //     await fallout.postAllocation({from:accounts[1],value:'10000'});
+    //     bal = await  fallout.allocations(accounts[1]);
+    //     assert.equal(bal.toNumber(),10000);
 
-        let c=await fallout.getAllocateBalance({from:accounts[1]});
-        console.log(c)
-        await fallout.sendAllocation(accounts[1]);
-        let b = await web3.eth.getBalance(accounts[1]);
+    //     let c=await fallout.getAllocateBalance({from:accounts[1]});
+    //     console.log(c)
+    //     await fallout.sendAllocation(accounts[1]);
+    //     let b = await web3.eth.getBalance(accounts[1]);
 
-        await fallout.collectAllocations({from:accounts[0]})
-        let x = await web3.eth.getBalance(accounts[1]);
-        console.log(await web3.utils.fromWei(x,"ether"));
+    //     await fallout.collectAllocations({from:accounts[0]})
+    //     let x = await web3.eth.getBalance(accounts[1]);
+    //     console.log(await web3.utils.fromWei(x,"ether"));
         
+
+    // })
+    it("Should test Coinflip contract ",async ()=>{
+        let status = await coinflip.status();
+        let consecutiveValue= await coinflip.consecutiveWins();
+
+        assert.equal(status,"Start");
+        let ether= await web3.utils.toWei("1","ether");
+        await coinflip.choice(0,{from:accounts[2],value:ether});
+        consecutiveValue= await coinflip.consecutiveWins();
+        console.log(consecutiveValue.toNumber())
+        await coinflip.choice(1,{from:accounts[2],value:ether});
+        consecutiveValue= await coinflip.consecutiveWins();
+        console.log(consecutiveValue.toNumber())
+
+        await coinflip.choice(1,{from:accounts[2],value:ether});
+        consecutiveValue= await coinflip.consecutiveWins();
+        console.log(consecutiveValue.toNumber())
+
+        await coinflip.choice(0,{from:accounts[2],value:ether});
+        consecutiveValue= await coinflip.consecutiveWins();
+        console.log(consecutiveValue.toNumber())
+
+        await coinflip.choice(1,{from:accounts[2],value:ether});
+        consecutiveValue= await coinflip.consecutiveWins();
+        console.log(consecutiveValue.toNumber())
+
+
 
     })
 })
