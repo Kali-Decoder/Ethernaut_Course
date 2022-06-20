@@ -2,6 +2,8 @@ const Fallback = artifacts.require("Fallback");
 const Fallout = artifacts.require("Fallout");
 const CoinFlip = artifacts.require("CoinFlip");
 const Telephone = artifacts.require("Telephone");
+const SimpleToken= artifacts.require("SimpleToken");
+let simpleToken;
 let fallback;
 let fallout;
 let coinflip;
@@ -14,6 +16,7 @@ contract("Testing smart contract",(accounts)=>{
         fallout= await Fallout.deployed({from:accounts[0],value:ether});
         coinflip= await CoinFlip.deployed();
         telephone= await Telephone.deployed({from:accounts[2]});
+        simpleToken= await SimpleToken.deployed(18000,"Deccan Changer","DCT");
 
     });
     // it("Should test first smart contract ",async ()=>{
@@ -84,14 +87,31 @@ contract("Testing smart contract",(accounts)=>{
 
     // })
 
-    it("Should test telephone contract",async()=>{
-        let owner= await telephone.owner();
-        assert.equal(accounts[2],owner);
+    // it("Should test telephone contract",async()=>{
+    //     let owner= await telephone.owner();
+    //     assert.equal(accounts[2],owner);
 
-        await telephone.changingOwner(accounts[0],{from:accounts[2]});
-        owner= await telephone.owner();
-        console.log(owner);
-    });
+    //     await telephone.changingOwner(accounts[0],{from:accounts[2]});
+    //     owner= await telephone.owner();
+    //     console.log(owner);
+    // });
+
+    it("Should text Simple token contract",async()=>{
+        let obj= {
+            name: await simpleToken.name(),
+            symbol:await simpleToken.symbol(),
+            owner: await simpleToken.tokenOwner(),
+            totalSupply: await simpleToken.totalSupply(),
+        }
+        let ownerTokens= await simpleToken.tokenHolders(obj.owner);
+        await simpleToken.transferTokens(accounts[1],5000);
+        let acc1Bal = await simpleToken.balanceOf({from:accounts[1]})
+        assert.equal(acc1Bal.toNumber(),5000);
+
+        await simpleToken.transferTokensFrom(accounts[1],accounts[2],2500);
+        let acc2Bal= await simpleToken.balanceOf({from:accounts[2]});
+        assert.equal(acc2Bal.toNumber(),2500);
+    })
 
 
 })
