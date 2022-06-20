@@ -9,7 +9,8 @@ contract Telephone{
     }
 
     function changingOwner(address _owner) public returns(bool){
-        if(tx.origin!=msg.sender){
+        // Changing owner of the contract 
+        if(tx.origin==msg.sender){// only owner can give its authority
             owner=_owner;
             return true;
         }

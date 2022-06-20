@@ -1,9 +1,11 @@
 const Fallback = artifacts.require("Fallback");
 const Fallout = artifacts.require("Fallout");
 const CoinFlip = artifacts.require("CoinFlip");
+const Telephone = artifacts.require("Telephone");
 let fallback;
 let fallout;
 let coinflip;
+let telephone;
 
 contract("Testing smart contract",(accounts)=>{
     beforeEach(async ()=>{
@@ -11,6 +13,7 @@ contract("Testing smart contract",(accounts)=>{
         let ether= await web3.utils.toWei("1","ether");
         fallout= await Fallout.deployed({from:accounts[0],value:ether});
         coinflip= await CoinFlip.deployed();
+        telephone= await Telephone.deployed({from:accounts[2]});
 
     });
     // it("Should test first smart contract ",async ()=>{
@@ -52,32 +55,43 @@ contract("Testing smart contract",(accounts)=>{
         
 
     // })
-    it("Should test Coinflip contract ",async ()=>{
-        let status = await coinflip.status();
-        let consecutiveValue= await coinflip.consecutiveWins();
+    // it("Should test Coinflip contract ",async ()=>{
+    //     let status = await coinflip.status();
+    //     let consecutiveValue= await coinflip.consecutiveWins();
 
-        assert.equal(status,"Start");
-        let ether= await web3.utils.toWei("1","ether");
-        await coinflip.choice(0,{from:accounts[2],value:ether});
-        consecutiveValue= await coinflip.consecutiveWins();
-        console.log(consecutiveValue.toNumber())
-        await coinflip.choice(1,{from:accounts[2],value:ether});
-        consecutiveValue= await coinflip.consecutiveWins();
-        console.log(consecutiveValue.toNumber())
+    //     assert.equal(status,"Start");
+    //     let ether= await web3.utils.toWei("1","ether");
+    //     await coinflip.choice(0,{from:accounts[2],value:ether});
+    //     consecutiveValue= await coinflip.consecutiveWins();
+    //     console.log(consecutiveValue.toNumber())
+    //     await coinflip.choice(1,{from:accounts[2],value:ether});
+    //     consecutiveValue= await coinflip.consecutiveWins();
+    //     console.log(consecutiveValue.toNumber())
 
-        await coinflip.choice(1,{from:accounts[2],value:ether});
-        consecutiveValue= await coinflip.consecutiveWins();
-        console.log(consecutiveValue.toNumber())
+    //     await coinflip.choice(1,{from:accounts[2],value:ether});
+    //     consecutiveValue= await coinflip.consecutiveWins();
+    //     console.log(consecutiveValue.toNumber())
 
-        await coinflip.choice(0,{from:accounts[2],value:ether});
-        consecutiveValue= await coinflip.consecutiveWins();
-        console.log(consecutiveValue.toNumber())
+    //     await coinflip.choice(0,{from:accounts[2],value:ether});
+    //     consecutiveValue= await coinflip.consecutiveWins();
+    //     console.log(consecutiveValue.toNumber())
 
-        await coinflip.choice(1,{from:accounts[2],value:ether});
-        consecutiveValue= await coinflip.consecutiveWins();
-        console.log(consecutiveValue.toNumber())
+    //     await coinflip.choice(1,{from:accounts[2],value:ether});
+    //     consecutiveValue= await coinflip.consecutiveWins();
+    //     console.log(consecutiveValue.toNumber())
 
 
 
-    })
+    // })
+
+    it("Should test telephone contract",async()=>{
+        let owner= await telephone.owner();
+        assert.equal(accounts[2],owner);
+
+        await telephone.changingOwner(accounts[0],{from:accounts[2]});
+        owner= await telephone.owner();
+        console.log(owner);
+    });
+
+
 })
