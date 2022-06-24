@@ -5,6 +5,8 @@ const Telephone = artifacts.require("Telephone");
 const SimpleToken= artifacts.require("SimpleToken");
 const ElectionFactory = artifacts.require("ElectionFactory.sol");
 const Election = artifacts.require("Election.sol");
+const Vault= artifacts.require("Vault");
+let vault;
 let simpleToken;
 let fallback;
 let fallout;
@@ -26,6 +28,8 @@ contract("Testing smart contract",(accounts)=>{
         let electionData = await electionFactory.getDeployedElection("neerajchoubisa876@gmail.com");
 
         election =await Election.at(electionData.deployedAddress);
+
+        vault= await Vault.deployed(1256);
         
     });
     // it("Should test first smart contract ",async ()=>{
@@ -121,37 +125,45 @@ contract("Testing smart contract",(accounts)=>{
     //     let acc2Bal= await simpleToken.balanceOf({from:accounts[2]});
     //     assert.equal(acc2Bal.toNumber(),2500);
     // })
-    it("Should Testing Election Contract",async ()=>{
-        let obj= {
-            electionName:await election.electionName(),
-            electionDesc:await election.electionDesc(),
-            electionAuthority:await election.electionAuthority(),
-            status:await election.status(),
-        }
-        // adding Candidate ..... 
-        await election.addCandidate("Neeraj Choubisa","NC","www.nikku","neerajchoubisa876@gmail.com");
-        await election.addCandidate("Sneha Gupta","SG","www.sneha","snehA345@gmail.com");
-        await election.addCandidate("Tanmay Bhatt","TB","www.tanmay","gtanmay654@gmail.com");
-        let numCandidates= await election.getNumberCandidates();
-        await election.vote(1,"nee@gmail.com",{from:accounts[1]});
-        await election.vote(2,"mee@gmail.com",{from:accounts[2]});
-        await election.vote(3,"pee@gmail.com",{from:accounts[3]});
-        await election.vote(1,"qee@gmail.com",{from:accounts[4]});
-        await election.vote(2,"ree@gmail.com",{from:accounts[5]});
-        await election.vote(3,"see@gmail.com",{from:accounts[6]});
-        await election.vote(2,"tee@gmail.com",{from:accounts[7]});
-        await election.vote(2,"uee@gmail.com",{from:accounts[8]});
-        await election.vote(1,"vee@gmail.com",{from:accounts[9]});
-        let numVoters= await election.getNumberVoters();
-        assert.equal(9,numVoters.toNumber());
-        assert.equal(3,numCandidates.toNumber());
-        let candidateDetail= await election.getCandidateDetail(1);
-        let electionDetail = await election.getElectionDetail();
-        assert.equal(candidateDetail.id,1);
-        assert.equal(electionDetail[3],true);
-        let winner= await election.getWinner({from:accounts[0]});
-        let status= await election.status();
-        assert.equal(status,false);
+    // it("Should Testing Election Contract",async ()=>{
+    //     let obj= {
+    //         electionName:await election.electionName(),
+    //         electionDesc:await election.electionDesc(),
+    //         electionAuthority:await election.electionAuthority(),
+    //         status:await election.status(),
+    //     }
+    //     // adding Candidate ..... 
+    //     await election.addCandidate("Neeraj Choubisa","NC","www.nikku","neerajchoubisa876@gmail.com");
+    //     await election.addCandidate("Sneha Gupta","SG","www.sneha","snehA345@gmail.com");
+    //     await election.addCandidate("Tanmay Bhatt","TB","www.tanmay","gtanmay654@gmail.com");
+    //     let numCandidates= await election.getNumberCandidates();
+    //     await election.vote(1,"nee@gmail.com",{from:accounts[1]});
+    //     await election.vote(2,"mee@gmail.com",{from:accounts[2]});
+    //     await election.vote(3,"pee@gmail.com",{from:accounts[3]});
+    //     await election.vote(1,"qee@gmail.com",{from:accounts[4]});
+    //     await election.vote(2,"ree@gmail.com",{from:accounts[5]});
+    //     await election.vote(3,"see@gmail.com",{from:accounts[6]});
+    //     await election.vote(2,"tee@gmail.com",{from:accounts[7]});
+    //     await election.vote(2,"uee@gmail.com",{from:accounts[8]});
+    //     await election.vote(1,"vee@gmail.com",{from:accounts[9]});
+    //     let numVoters= await election.getNumberVoters();
+    //     assert.equal(9,numVoters.toNumber());
+    //     assert.equal(3,numCandidates.toNumber());
+    //     let candidateDetail= await election.getCandidateDetail(1);
+    //     let electionDetail = await election.getElectionDetail();
+    //     assert.equal(candidateDetail.id,1);
+    //     assert.equal(electionDetail[3],true);
+    //     let winner= await election.getWinner({from:accounts[0]});
+    //     let status= await election.status();
+    //     assert.equal(status,false);
+
+    // })
+
+    it("Should check vault contract",async()=>{
+        let locked = await vault.locked();
+        assert.equal(true,locked);
+        await vault.unLock(1256);
+        assert.equal(false,locked);
 
     })
 
