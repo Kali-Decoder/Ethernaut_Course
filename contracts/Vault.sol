@@ -3,7 +3,7 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract Vault {
     uint private pin;
-    bool locked;
+    bool public locked;
 
     constructor(uint  _password) {
         require(_password<=9999,"Pin Should be of four digit");
