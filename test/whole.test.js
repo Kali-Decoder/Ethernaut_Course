@@ -7,6 +7,8 @@ const ElectionFactory = artifacts.require("ElectionFactory.sol");
 const Election = artifacts.require("Election.sol");
 const Vault= artifacts.require("Vault");
 const King= artifacts.require("King");
+const Reentrancy = artifacts.require("Re_entrancy");
+const reentrancy;
 let vault;
 let simpleToken;
 let fallback;
@@ -32,7 +34,8 @@ contract("Testing smart contract",(accounts)=>{
         // election =await Election.at(electionData.deployedAddress);
 
         // vault= await Vault.deployed(1256);
-        king = await King.deployed({value:ether,from:accounts[0]});
+        // king = await King.deployed({value:ether,from:accounts[0]});
+        reentrancy= await Reentrancy.deploy();
     });
     // it("Should test first smart contract ",async ()=>{
     //     let owner= await fallback.owner();
@@ -169,17 +172,22 @@ contract("Testing smart contract",(accounts)=>{
 
     // })
 
-    it("Should check king contract",async()=>{
-        let owner= await king.owner();
-        let king= await king.king();
-        let prize = await king.prize();
+    // it("Should check king contract",async()=>{
+    //     let owner= await king.owner();
+    //     let king= await king.king();
+    //     let prize = await king.prize();
 
-        assert.equal(owner,king);
-        console.log(prize);
-    });
+    //     assert.equal(owner,king);
+    //     console.log(prize);
+    // });
     // it("should returns king address",async ()=>{
     //     let king = await king._king();
     //     console.log(king);
     // })
+
+    it("Should Check Reentrancy Contract ",async()=>{
+        let bal = await reentrancy.checkBalance();
+        console.log(bal);
+    })
 
 })
