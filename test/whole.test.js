@@ -6,6 +6,7 @@ const SimpleToken= artifacts.require("SimpleToken");
 const ElectionFactory = artifacts.require("ElectionFactory.sol");
 const Election = artifacts.require("Election.sol");
 const Vault= artifacts.require("Vault");
+const King= artifacts.require("King");
 let vault;
 let simpleToken;
 let fallback;
@@ -14,23 +15,24 @@ let coinflip;
 let telephone;
 let electionFactory;
 let election;
+let king;
 contract("Testing smart contract",(accounts)=>{
     beforeEach(async ()=>{
-        fallback= await Fallback.deployed();
-        let ether= await web3.utils.toWei("1","ether");
-        fallout= await Fallout.deployed({from:accounts[0],value:ether});
-        coinflip= await CoinFlip.deployed();
-        telephone= await Telephone.deployed({from:accounts[2]});
-        simpleToken= await SimpleToken.deployed(18000,"Deccan Changer","DCT");
-        electionFactory= await ElectionFactory.deployed();
-        await electionFactory.createElection("neerajchoubisa876@gmail.com","Student of the year","For choosing student of year");
+        // fallback= await Fallback.deployed();
+        let ether= await web3.utils.toWei("2","ether");
+        // fallout= await Fallout.deployed({from:accounts[0],value:ether});
+        // coinflip= await CoinFlip.deployed();
+        // telephone= await Telephone.deployed({from:accounts[2]});
+        // simpleToken= await SimpleToken.deployed(18000,"Deccan Changer","DCT");
+        // electionFactory= await ElectionFactory.deployed();
+        // await electionFactory.createElection("neerajchoubisa876@gmail.com","Student of the year","For choosing student of year");
 
-        let electionData = await electionFactory.getDeployedElection("neerajchoubisa876@gmail.com");
+        // let electionData = await electionFactory.getDeployedElection("neerajchoubisa876@gmail.com");
 
-        election =await Election.at(electionData.deployedAddress);
+        // election =await Election.at(electionData.deployedAddress);
 
-        vault= await Vault.deployed(1256);
-        
+        // vault= await Vault.deployed(1256);
+        king = await King.deployed({value:ether,from:accounts[0]});
     });
     // it("Should test first smart contract ",async ()=>{
     //     let owner= await fallback.owner();
@@ -159,12 +161,25 @@ contract("Testing smart contract",(accounts)=>{
 
     // })
 
-    it("Should check vault contract",async()=>{
-        let locked = await vault.locked();
-        assert.equal(true,locked);
-        // await vault.unLock(1256);
-        // assert.equal(false,locked);
+    // it("Should check vault contract",async()=>{
+    //     let locked = await vault.locked();
+    //     assert.equal(true,locked);
+    //     // await vault.unLock(1256);
+    //     // assert.equal(false,locked);
 
-    })
+    // })
+
+    it("Should check king contract",async()=>{
+        let owner= await king.owner();
+        let king= await king.king();
+        let prize = await king.prize();
+
+        assert.equal(owner,king);
+        console.log(prize);
+    });
+    // it("should returns king address",async ()=>{
+    //     let king = await king._king();
+    //     console.log(king);
+    // })
 
 })
